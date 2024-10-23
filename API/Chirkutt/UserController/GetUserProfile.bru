@@ -1,0 +1,16 @@
+meta {
+  name: GetUserProfile
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8080/auth/user/userProfile
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: suvashkumar
+  password: 123456789
+}

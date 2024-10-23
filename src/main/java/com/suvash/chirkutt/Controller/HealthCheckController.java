@@ -1,4 +1,4 @@
-package com.suvash.chirkutt.controller;
+package com.suvash.chirkutt.Controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
