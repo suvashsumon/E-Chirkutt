@@ -2,6 +2,7 @@ package com.suvash.chirkutt.Controller;
 
 import com.suvash.chirkutt.Dto.AuthResponseDto;
 import com.suvash.chirkutt.Dto.LoginDto;
+import com.suvash.chirkutt.Dto.RegisterDto;
 import com.suvash.chirkutt.Service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,22 @@ public class AuthController {
 
         //03 - Return the response to the user
         return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto)
+    {
+        boolean flag = authService.register(registerDto);
+        if(flag)
+        {
+            LoginDto loginDto = new LoginDto();
+            loginDto.setUsername(registerDto.getUsername());
+            loginDto.setPassword(registerDto.getPassword());
+            String token = authService.login(loginDto);
+            AuthResponseDto authResponseDto = new AuthResponseDto();
+            authResponseDto.setAccessToken(token);
+            return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Invalid Information", HttpStatus.BAD_REQUEST);
     }
 }
