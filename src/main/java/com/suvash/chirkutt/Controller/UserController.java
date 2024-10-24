@@ -17,8 +17,14 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/get-link")
-    public ResponseEntity<?>index()
+    public ResponseEntity<?>getLink()
     {
         return new ResponseEntity<>(userService.getUserLink(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-all-message")
+    public ResponseEntity<?>getAllMessages()
+    {
+        return new ResponseEntity<>(userService.getAllMessage(), HttpStatus.OK);
     }
 }
