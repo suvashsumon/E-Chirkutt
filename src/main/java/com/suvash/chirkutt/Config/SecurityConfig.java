@@ -40,6 +40,7 @@ public class SecurityConfig {
                     authorize.requestMatchers("/health-check").permitAll();
                     authorize.requestMatchers("/swagger-ui/**").permitAll();
                     authorize.requestMatchers("/v3/api-docs/**").permitAll();
+                    authorize.requestMatchers("/api/send-chirkutt/**").permitAll();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     authorize.anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());

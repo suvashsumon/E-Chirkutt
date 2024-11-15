@@ -1,0 +1,23 @@
+meta {
+  name: Send Chircuitt
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://127.0.0.1:8080/api/send-chirkutt/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdXZhc2hrdW1hciIsImlhdCI6MTczMTU5MzkyOCwiZXhwIjoxNzMxNTk3NTI4fQ.M5D0JH7jkrVYdi8gRvAz9rhfikFPlKNiNaebBvqQJew
+}
+
+body:json {
+  {
+    "user_id" : 1,
+    "message" : "I love you, dear",
+    "senderinfo" : "no one"
+  }
+}

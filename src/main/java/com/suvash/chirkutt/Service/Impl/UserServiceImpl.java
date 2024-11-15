@@ -47,7 +47,9 @@ public class UserServiceImpl implements UserService {
         if(optionalUser.isPresent()) user = optionalUser.get();
 
         // fetch the messages
-        List<Message> messages = messageRepository.findByUser(user);
+        List<Message> messages = messageRepository.findByUser(user).stream()
+                .sorted((m1, m2) -> m2.getCreatedAt().compareTo(m1.getCreatedAt())) // Descending order
+                .toList();
 
         // convert Message list into MessageResponseDto list
         return messages.stream().map(message -> new MessageResponseDto(
