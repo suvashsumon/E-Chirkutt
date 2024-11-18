@@ -22,9 +22,6 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message storeMessage(MessageDto messageDto) {
         Optional<User> userOptional = userRepository.findByUsername(messageDto.getUsername());
-        if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("User with ID " + messageDto.getUsername() + " not found.");
-        }
         User user = userOptional.get();
         Message message = new Message();
         message.setUser(user);
