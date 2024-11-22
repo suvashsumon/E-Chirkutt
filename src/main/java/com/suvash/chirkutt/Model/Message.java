@@ -1,8 +1,10 @@
 package com.suvash.chirkutt.Model;
 
+import com.suvash.chirkutt.Encryption.Encrypt;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
@@ -19,8 +21,10 @@ public class Message {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Convert(converter = Encrypt.class)
     private String senderinfo;
 
+    @Convert(converter = Encrypt.class)
     @Column(nullable = false)
     private String message;
 
