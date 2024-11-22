@@ -3,11 +3,10 @@ package com.suvash.chirkutt.Controller;
 import com.suvash.chirkutt.Dto.MessageDto;
 import com.suvash.chirkutt.Dto.Response.MessageSentResponse;
 import com.suvash.chirkutt.Exceptions.UserNotFoundException;
-import com.suvash.chirkutt.Model.Message;
 import com.suvash.chirkutt.Model.User;
 import com.suvash.chirkutt.Repository.UserRepository;
 import com.suvash.chirkutt.Service.MessageService;
-import com.suvash.chirkutt.Service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,7 @@ public class MessageController {
     UserRepository userRepository;
 
     @PostMapping("/api/send-chirkutt/")
-    public ResponseEntity<MessageSentResponse> sendChirkutt(@RequestBody MessageDto messageDto) {
+    public ResponseEntity<?> sendChirkutt(@Valid @RequestBody MessageDto messageDto) {
         Optional<User> user = userRepository.findByUsername(messageDto.getUsername());
         if(user.isEmpty()) throw new UserNotFoundException("User not found.");
         messageService.storeMessage(messageDto);
