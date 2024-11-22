@@ -3,6 +3,8 @@ package com.suvash.chirkutt.Controller;
 import com.suvash.chirkutt.Dto.AuthResponseDto;
 import com.suvash.chirkutt.Dto.LoginDto;
 import com.suvash.chirkutt.Dto.RegisterDto;
+import com.suvash.chirkutt.Model.User;
+import com.suvash.chirkutt.Repository.UserRepository;
 import com.suvash.chirkutt.Service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
@@ -21,6 +25,9 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    UserRepository userRepository;
 
     // Build Login REST API
     @PostMapping("/login")
@@ -38,8 +45,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto)
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto)
     {
+        if(userRepository.existsByUsername(registerDto.getUsername()))
+            return new ResponseEntity<>("Duplicate username found.", HttpStatus.BAD_REQUEST);
+
+        if(userRepository.existsByEmail(registerDto.getEmail()))
+            return new ResponseEntity<>("Duplicate email found.", HttpStatus.BAD_REQUEST);
+
         boolean flag = authService.register(registerDto);
         if(flag)
         {
@@ -51,6 +64,6 @@ public class AuthController {
             authResponseDto.setAccessToken(token);
             return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Invalid Information", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("User account registration failed.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
