@@ -4,6 +4,7 @@ import com.suvash.chirkutt.Dto.AuthResponseDto;
 import com.suvash.chirkutt.Dto.LoginDto;
 import com.suvash.chirkutt.Dto.RegisterDto;
 import com.suvash.chirkutt.Service.AuthService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class AuthController {
 
     // Build Login REST API
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginDto loginDto){
 
         //01 - Receive the token from AuthService
         String token = authService.login(loginDto);
