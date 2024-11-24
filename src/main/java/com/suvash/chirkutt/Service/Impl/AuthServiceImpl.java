@@ -1,18 +1,14 @@
 package com.suvash.chirkutt.Service.Impl;
 
 import com.suvash.chirkutt.Config.JwtTokenProvider;
-import com.suvash.chirkutt.Dto.LoginDto;
-import com.suvash.chirkutt.Dto.RegisterDto;
-import com.suvash.chirkutt.Dto.Request.PasswordChangeDto;
-import com.suvash.chirkutt.Exceptions.UserNotFoundException;
+import com.suvash.chirkutt.Dto.Request.LoginDto;
+import com.suvash.chirkutt.Dto.Request.RegisterDto;
 import com.suvash.chirkutt.Model.Role;
 import com.suvash.chirkutt.Model.User;
 import com.suvash.chirkutt.Repository.RoleRepository;
 import com.suvash.chirkutt.Repository.UserRepository;
 import com.suvash.chirkutt.Service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Service

@@ -1,6 +1,6 @@
 package com.suvash.chirkutt.Controller;
 
-import com.suvash.chirkutt.Dto.MessageDto;
+import com.suvash.chirkutt.Dto.Request.MessageDto;
 import com.suvash.chirkutt.Dto.Response.MessageSentResponse;
 import com.suvash.chirkutt.Exceptions.UserNotFoundException;
 import com.suvash.chirkutt.Model.User;

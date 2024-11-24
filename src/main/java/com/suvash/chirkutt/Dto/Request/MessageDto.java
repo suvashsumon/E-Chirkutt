@@ -1,4 +1,4 @@
-package com.suvash.chirkutt.Dto;
+package com.suvash.chirkutt.Dto.Request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

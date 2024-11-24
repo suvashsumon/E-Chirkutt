@@ -1,9 +1,8 @@
 package com.suvash.chirkutt.Controller;
 
-import com.suvash.chirkutt.Dto.AuthResponseDto;
-import com.suvash.chirkutt.Dto.LoginDto;
-import com.suvash.chirkutt.Dto.RegisterDto;
-import com.suvash.chirkutt.Dto.Request.PasswordChangeDto;
+import com.suvash.chirkutt.Dto.Response.AuthResponseDto;
+import com.suvash.chirkutt.Dto.Request.LoginDto;
+import com.suvash.chirkutt.Dto.Request.RegisterDto;
 import com.suvash.chirkutt.Repository.UserRepository;
 import com.suvash.chirkutt.Service.AuthService;
 import jakarta.validation.Valid;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @AllArgsConstructor
 @RestController

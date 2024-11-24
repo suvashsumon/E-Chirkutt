@@ -1,4 +1,4 @@
-package com.suvash.chirkutt.Dto;
+package com.suvash.chirkutt.Dto.Response;
 
 import lombok.Data;
 
