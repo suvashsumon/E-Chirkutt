@@ -1,16 +1,22 @@
 package com.suvash.chirkutt.Service.Impl;
 
 import com.suvash.chirkutt.Dto.Request.PasswordChangeDto;
+import com.suvash.chirkutt.Dto.Request.PasswordRecoveryDto;
+import com.suvash.chirkutt.Dto.Response.CustomResponseDto;
 import com.suvash.chirkutt.Dto.Response.LinkResponseDto;
 import com.suvash.chirkutt.Dto.Response.MessageResponseDto;
+import com.suvash.chirkutt.Dto.Response.PasswordChangedResponse;
 import com.suvash.chirkutt.Exceptions.UserNotFoundException;
 import com.suvash.chirkutt.Model.Message;
 import com.suvash.chirkutt.Model.User;
 import com.suvash.chirkutt.Repository.MessageRepository;
 import com.suvash.chirkutt.Repository.UserRepository;
+import com.suvash.chirkutt.Service.EmailService;
 import com.suvash.chirkutt.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +40,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
 
 
     public Authentication getAuthenticatedUserDetails()
@@ -72,7 +82,7 @@ public class UserServiceImpl implements UserService {
         ).collect(Collectors.toList());
     }
 
-    public void changePassword(PasswordChangeDto passwordChangeDto)
+    public ResponseEntity<?> changePassword(PasswordChangeDto passwordChangeDto)
     {
         Optional<User> userOpt = userRepository.findByUsername(this.getAuthenticatedUserDetails().getName());
         if(!userOpt.isPresent())
@@ -83,7 +93,40 @@ public class UserServiceImpl implements UserService {
         User user = userOpt.get();
         user.setPassword(passwordEncoder.encode(passwordChangeDto.getNewPassword()));
         userRepository.save(user);
+
+        return new ResponseEntity<>(
+                new PasswordChangedResponse(
+                        "Password change successfully.", HttpStatus.OK.value()
+                ),
+                HttpStatus.OK
+        );
     }
 
+    public String generateToken() {
+        return UUID.randomUUID().toString();
+    }
 
+    public ResponseEntity<?> passwordRecoveryLink(PasswordRecoveryDto passwordRecoveryDto)
+    {
+        // check that user exist or not
+        Optional<User> userOpt = userRepository.findByUsername(passwordRecoveryDto.getUsername());
+        if(!userOpt.isPresent())
+            throw new UserNotFoundException("User not found.");
+        User user = userOpt.get();
+        String userEmail = user.getEmail();
+        String recoveryToken = generateToken();
+        String emailBody = "Password Recovery Token : "+recoveryToken;
+        emailService.sendEmailToUser(userEmail, "Password Recovery Token", emailBody);
+
+        user.setPasswordRecoveryToken(recoveryToken);
+        userRepository.save(user);
+
+        return new ResponseEntity<>(
+                new CustomResponseDto(
+                        "Password recovery token has been sent.",
+                        HttpStatus.OK.value()
+                ),
+                HttpStatus.OK
+        );
+    }
 }
