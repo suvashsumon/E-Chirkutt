@@ -3,7 +3,7 @@ package com.suvash.chirkutt.Controller;
 import com.suvash.chirkutt.Dto.AuthResponseDto;
 import com.suvash.chirkutt.Dto.LoginDto;
 import com.suvash.chirkutt.Dto.RegisterDto;
-import com.suvash.chirkutt.Model.User;
+import com.suvash.chirkutt.Dto.Request.PasswordChangeDto;
 import com.suvash.chirkutt.Repository.UserRepository;
 import com.suvash.chirkutt.Service.AuthService;
 import jakarta.validation.Valid;

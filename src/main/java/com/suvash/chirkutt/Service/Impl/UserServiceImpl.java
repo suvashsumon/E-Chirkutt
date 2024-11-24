@@ -1,7 +1,9 @@
 package com.suvash.chirkutt.Service.Impl;
 
+import com.suvash.chirkutt.Dto.Request.PasswordChangeDto;
 import com.suvash.chirkutt.Dto.Response.LinkResponseDto;
 import com.suvash.chirkutt.Dto.Response.MessageResponseDto;
+import com.suvash.chirkutt.Exceptions.UserNotFoundException;
 import com.suvash.chirkutt.Model.Message;
 import com.suvash.chirkutt.Model.User;
 import com.suvash.chirkutt.Repository.MessageRepository;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,10 +31,20 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+    public Authentication getAuthenticatedUserDetails()
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication;
+    }
+
     @Override
     public LinkResponseDto getUserLink() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = getAuthenticatedUserDetails().getName();
         LinkResponseDto linkResponseDto = new LinkResponseDto();
         linkResponseDto.setMessageLink(baseurl+"/send-chirkutt/"+username);
         return linkResponseDto;
@@ -40,8 +53,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<MessageResponseDto> getAllMessage() {
         // fetch the user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = getAuthenticatedUserDetails().getName();
         Optional<User> optionalUser = userRepository.findByUsername(username);
         User user = null;
         if(optionalUser.isPresent()) user = optionalUser.get();
@@ -57,6 +70,19 @@ public class UserServiceImpl implements UserService {
                 message.getSenderinfo(),
                 message.getCreatedAt())
         ).collect(Collectors.toList());
+    }
+
+    public void changePassword(PasswordChangeDto passwordChangeDto)
+    {
+        Optional<User> userOpt = userRepository.findByUsername(this.getAuthenticatedUserDetails().getName());
+        if(!userOpt.isPresent())
+        {
+            throw new UserNotFoundException("User not found.");
+        }
+
+        User user = userOpt.get();
+        user.setPassword(passwordEncoder.encode(passwordChangeDto.getNewPassword()));
+        userRepository.save(user);
     }
 
 

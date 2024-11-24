@@ -36,6 +36,7 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authorize) -> {
+                    authorize.requestMatchers("/api/change-password/*").permitAll();
                     authorize.requestMatchers("/api/auth/**").permitAll();
                     authorize.requestMatchers("/health-check").permitAll();
                     authorize.requestMatchers("/swagger-ui/**").permitAll();
