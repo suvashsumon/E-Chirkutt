@@ -1,5 +1,6 @@
 package com.suvash.chirkutt.Exceptions;
 
+import com.suvash.chirkutt.Dto.Response.CustomErrorResponseDto;
 import com.suvash.chirkutt.Dto.Response.UserNotFoundExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -40,10 +41,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
-    public ResponseEntity<String>httpMessageNotReadableException(HttpMessageNotReadableException ex)
+    public ResponseEntity<?>httpMessageNotReadableException(HttpMessageNotReadableException ex)
     {
+
         return new ResponseEntity<>(
-                "The request payload contains invalid syntax or is improperly formatted. Please ensure the JSON is valid and matches the required structure.",
+                new CustomErrorResponseDto("The request payload contains invalid syntax or is improperly formatted.", HttpStatus.BAD_REQUEST.value()),
                 HttpStatus.BAD_REQUEST
         );
     }
