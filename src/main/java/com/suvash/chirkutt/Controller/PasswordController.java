@@ -2,6 +2,7 @@ package com.suvash.chirkutt.Controller;
 
 import com.suvash.chirkutt.Dto.Request.PasswordChangeDto;
 import com.suvash.chirkutt.Dto.Request.PasswordRecoveryDto;
+import com.suvash.chirkutt.Dto.Request.ResetNewPasswordDto;
 import com.suvash.chirkutt.Dto.Response.PasswordChangedResponse;
 import com.suvash.chirkutt.Repository.UserRepository;
 import com.suvash.chirkutt.Service.UserService;
@@ -34,5 +35,11 @@ public class PasswordController {
     public ResponseEntity<?> getPasswordRecoveryLink(@Valid @RequestBody PasswordRecoveryDto passwordRecoveryDto)
     {
         return userService.passwordRecoveryLink(passwordRecoveryDto);
+    }
+
+    @PostMapping("/recover")
+    public ResponseEntity<?> recoverAndSetNewPassword(@Valid @RequestBody ResetNewPasswordDto resetNewPasswordDto)
+    {
+        return userService.recoverPasswordService(resetNewPasswordDto);
     }
 }

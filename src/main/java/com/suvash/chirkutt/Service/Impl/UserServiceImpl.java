@@ -2,6 +2,7 @@ package com.suvash.chirkutt.Service.Impl;
 
 import com.suvash.chirkutt.Dto.Request.PasswordChangeDto;
 import com.suvash.chirkutt.Dto.Request.PasswordRecoveryDto;
+import com.suvash.chirkutt.Dto.Request.ResetNewPasswordDto;
 import com.suvash.chirkutt.Dto.Response.CustomResponseDto;
 import com.suvash.chirkutt.Dto.Response.LinkResponseDto;
 import com.suvash.chirkutt.Dto.Response.MessageResponseDto;
@@ -22,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -119,6 +121,7 @@ public class UserServiceImpl implements UserService {
         emailService.sendEmailToUser(userEmail, "Password Recovery Token", emailBody);
 
         user.setPasswordRecoveryToken(recoveryToken);
+        user.setTokenExpiryTime(new Date());
         userRepository.save(user);
 
         return new ResponseEntity<>(
@@ -126,6 +129,42 @@ public class UserServiceImpl implements UserService {
                         "Password recovery token has been sent.",
                         HttpStatus.OK.value()
                 ),
+                HttpStatus.OK
+        );
+    }
+
+    public ResponseEntity<?> recoverPasswordService(ResetNewPasswordDto resetNewPasswordDto)
+    {
+        Optional<User> userOpt = userRepository.findByUsername(resetNewPasswordDto.getUsername());
+        if(!userOpt.isPresent())
+        {
+            throw new UserNotFoundException("User not found");
+        }
+
+        User user = userOpt.get();
+
+        if(user.getTokenExpiryTime().before(new Date()))
+        {
+            return new ResponseEntity<>(
+                    new CustomResponseDto("Token expired.", HttpStatus.BAD_REQUEST.value()),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if(!user.getPasswordRecoveryToken().equals(resetNewPasswordDto.getToken()))
+        {
+            return new ResponseEntity<>(
+                    new CustomResponseDto("Invalid token provided.", HttpStatus.BAD_REQUEST.value()),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        user.setPassword(passwordEncoder.encode(resetNewPasswordDto.getNewPassword()));
+        user.setTokenExpiryTime(null);
+        user.setPasswordRecoveryToken(null);
+        userRepository.save(user);
+        return new ResponseEntity<>(
+                new CustomResponseDto("Password changed successfully.", HttpStatus.OK.value()),
                 HttpStatus.OK
         );
     }
