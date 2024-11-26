@@ -5,6 +5,7 @@ import com.suvash.chirkutt.Dto.Request.LoginDto;
 import com.suvash.chirkutt.Dto.Request.RegisterDto;
 import com.suvash.chirkutt.Repository.UserRepository;
 import com.suvash.chirkutt.Service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,10 @@ public class AuthController {
 
     // Build Login REST API
     @PostMapping("/login")
+    @Operation(
+            summary = "Login Request",
+            description = "This endpoint checks user credentials and then return JWT token if user gets authenticated."
+    )
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginDto loginDto){
 
         //01 - Receive the token from AuthService
