@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
         return authentication;
     }
 
+
     @Override
     public LinkResponseDto getUserLink() {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -80,6 +81,7 @@ public class UserServiceImpl implements UserService {
         return messages.stream().map(message -> new MessageResponseDto(
                 message.getMessage(),
                 message.getSenderinfo(),
+                message.getStatus(),
                 message.getCreatedAt())
         ).collect(Collectors.toList());
     }

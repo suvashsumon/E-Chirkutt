@@ -28,11 +28,14 @@ public class Message {
     @Column(nullable = false)
     private String message;
 
+    private String status; // passed or blocked
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     @PrePersist
     public void onCreate() {
         this.createdAt = new Date();
+        if(this.status==null) this.status = "passed";
     }
 }
