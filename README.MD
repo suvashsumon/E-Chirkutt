@@ -26,3 +26,6 @@
 ## API Documentation
 The API documentation can be accessed at:  
 [Swagger UI](http://127.0.0.1:8080/swagger-ui/index.html)
+
+## Conclusion
+Thank you.
