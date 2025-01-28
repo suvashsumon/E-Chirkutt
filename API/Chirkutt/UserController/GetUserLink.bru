@@ -1,0 +1,15 @@
+meta {
+  name: GetUserLink
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8080/api/user/get-link
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXJ0aG8iLCJpYXQiOjE3MzI2NDM4NjksImV4cCI6MTczMjY0NzQ2OX0.inX3UwndvVl5GtNcXXSCLnHersjXo7AYQefpuW2Izdg
+}

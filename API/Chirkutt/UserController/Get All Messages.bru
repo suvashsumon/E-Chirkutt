@@ -1,0 +1,15 @@
+meta {
+  name: Get All Messages
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/api/user/get-all-message
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFtaWthbWltaSIImlhdCI6MTczMjg5NTM0MCwiZXhwIjoxNzMyODk4OTQwfQ.BdfTok7L7X7rO2I42vrsnZ2voQk8225ZrBTS0p9Q9wk
+}

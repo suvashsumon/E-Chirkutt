@@ -1,14 +1,23 @@
 package com.suvash.chirkutt.Service.Impl;
 
 import com.suvash.chirkutt.Config.JwtTokenProvider;
-import com.suvash.chirkutt.Dto.LoginDto;
+import com.suvash.chirkutt.Dto.Request.LoginDto;
+import com.suvash.chirkutt.Dto.Request.RegisterDto;
+import com.suvash.chirkutt.Model.Role;
+import com.suvash.chirkutt.Model.User;
+import com.suvash.chirkutt.Repository.RoleRepository;
+import com.suvash.chirkutt.Repository.UserRepository;
 import com.suvash.chirkutt.Service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -17,6 +26,12 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public String login(LoginDto loginDto) {
@@ -36,5 +51,35 @@ public class AuthServiceImpl implements AuthService {
 
         // 04 - Return the token to controller
         return token;
+    }
+
+    @Override
+    public boolean register(RegisterDto registerDto)
+    {
+        if (userRepository.existsByUsername(registerDto.getUsername())) {
+            return false;
+        }
+
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+//            throw new ResourceAlreadyExistsException("Email is already registered!");
+            return false;
+        }
+
+        // create role for user
+        Role userRole = roleRepository.findByName("ROLE_USER");
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+
+        // Create a new user object
+        User user = new User();
+        user.setUsername(registerDto.getUsername());
+        user.setEmail(registerDto.getEmail());
+        user.setName(registerDto.getName());
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setRoles(roles);  // If roles need to be assigned
+
+        // Save the user to the database
+        userRepository.save(user);
+        return true;
     }
 }

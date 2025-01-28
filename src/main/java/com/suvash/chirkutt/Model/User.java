@@ -2,7 +2,10 @@ package com.suvash.chirkutt.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -19,6 +22,13 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private String uuid;
+
+    @Column(nullable = true)
+    private String passwordRecoveryToken;
+    @Column(nullable = true)
+    private Date tokenExpiryTime;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
@@ -26,4 +36,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
     private Set<Role> roles;
+
+
+    @PrePersist
+    public void prePersist() {
+        this.uuid = UUID.randomUUID().toString();
+    }
 }

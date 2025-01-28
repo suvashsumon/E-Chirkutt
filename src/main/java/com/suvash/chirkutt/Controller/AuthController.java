@@ -1,8 +1,12 @@
 package com.suvash.chirkutt.Controller;
 
-import com.suvash.chirkutt.Dto.AuthResponseDto;
-import com.suvash.chirkutt.Dto.LoginDto;
+import com.suvash.chirkutt.Dto.Response.AuthResponseDto;
+import com.suvash.chirkutt.Dto.Request.LoginDto;
+import com.suvash.chirkutt.Dto.Request.RegisterDto;
+import com.suvash.chirkutt.Repository.UserRepository;
 import com.suvash.chirkutt.Service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,9 +24,16 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    UserRepository userRepository;
+
     // Build Login REST API
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
+    @Operation(
+            summary = "Login Request",
+            description = "This endpoint checks user credentials and then return JWT token if user gets authenticated."
+    )
+    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginDto loginDto){
 
         //01 - Receive the token from AuthService
         String token = authService.login(loginDto);
@@ -33,5 +44,28 @@ public class AuthController {
 
         //03 - Return the response to the user
         return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto)
+    {
+        if(userRepository.existsByUsername(registerDto.getUsername()))
+            return new ResponseEntity<>("Duplicate username found.", HttpStatus.BAD_REQUEST);
+
+        if(userRepository.existsByEmail(registerDto.getEmail()))
+            return new ResponseEntity<>("Duplicate email found.", HttpStatus.BAD_REQUEST);
+
+        boolean flag = authService.register(registerDto);
+        if(flag)
+        {
+            LoginDto loginDto = new LoginDto();
+            loginDto.setUsername(registerDto.getUsername());
+            loginDto.setPassword(registerDto.getPassword());
+            String token = authService.login(loginDto);
+            AuthResponseDto authResponseDto = new AuthResponseDto();
+            authResponseDto.setAccessToken(token);
+            return new ResponseEntity<>(authResponseDto, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("User account registration failed.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
